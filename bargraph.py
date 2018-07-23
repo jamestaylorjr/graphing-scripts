@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import os
 from argparse import ArgumentParser
@@ -9,13 +10,12 @@ import pandas as pd
 import numpy as np
 
 parser = ArgumentParser()
-parser.add_argument("-f","--file",dest="filename", help="The input datafile", metavar="FILE")
-parser.add_argument("-g","--group",dest="group", help="The groups that you would like to sort by. May be an array.")
-parser.add_argument("-d","--dependent",dest="dep", help="The dependent variable you wish to graph.")
+parser.add_argument("-f","--file",dest="filename", help="The input datafile", metavar="FILE",required="TRUE")
+parser.add_argument("-g","--group",dest="group", help="The groups that you would like to sort by.",required="TRUE")
+parser.add_argument("-d","--dependent",dest="dep", help="The dependent variable you wish to graph.",required="TRUE")
 parser.add_argument("-t","--title",dest="title", help="The title of your figure.")
-parser.add_argument("-o","--output",dest="output", help="The desired output filename. Please include the extension.")
+parser.add_argument("-o","--output",dest="output", help="The desired output filename. Please include the extension.",required="TRUE")
 args = parser.parse_args()
-
 
 data1 = pd.read_csv(args.filename, sep="\t", lineterminator="\n")
 
@@ -39,8 +39,13 @@ def plot_v1(data,error,title):
         #plot the bars
         ax.bar(np.arange(len(data)),data,yerr=error,align="center",alpha=0.5,ecolor='black',capsize=2)
 
+        #math to determine ylimit
+        maxmean = max(data)
+        maxstd = max(error)
+        ylimval = (maxmean+maxstd)*1.1
+        print(ylimval)
         #setting a nice y-axis limit
-        ax.set_ylim(0,25)
+        ax.set_ylim(0,ylimval)
 
         #label the bars
         ax.set_xticks(np.arange(len(data)))
